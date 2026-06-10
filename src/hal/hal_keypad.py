@@ -39,7 +39,9 @@ def get_key():
                     #print (MATRIX[j][i]) #print the key pressed
                     cbk_func(MATRIX[j][i])
                     #return MATRIX[j][i]
-
+                    key_pressed = MATRIX[j][i]
                     while GPIO.input(ROW[j])==0: #debounce
                         sleep(0.1)
+
             GPIO.output(COL[i],1) #write back default value of 1
+            return key_pressed
