@@ -9,19 +9,17 @@ extend_return_period = MATRIX[0][2] #This is to extend the period when books is 
 result = 0
 keypad.init()
 key_press = keypad.get_key()
-def collect_books_detection():
+def process_detection():
     if key_press == return_books:
         result = 1
         return result
-def return_books_detection():
-    if key_press == collect_books:
+    elif key_press == collect_books:
         result = 2
         return result
-def extend_return_period_detection():
-    if key_press == extend_return_period:
+    elif key_press == extend_return_period:
         result = 3
         return result
+    else:
+        return 0
 
-collect_books_detection()
-return_books_detection()
-extend_return_period()
+process_detection()
