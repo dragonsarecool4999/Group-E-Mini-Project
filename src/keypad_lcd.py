@@ -3,9 +3,12 @@ from hal import hal_lcd as LCD
 from time import sleep
 from hal import hal_keypad as keypad
 import config
+import valid_status 
+import time
 
 
 user_input =""
+selected = 0
 
 
 def keypad_check(key):
@@ -23,6 +26,21 @@ def keypad_check(key):
         elif key <1 or key>3:
             config.outside_range=1
         sleep(0.3)
+    if config.extend_return_period == 1 and config.extension_step==1:
+        if len(user_input)==1:
+            selected = int(user_input)
+            if 0<=selected<=9:
+                if selected ==0:
+                    config.chosen_book_key=10
+                else:
+                    config.chosen_book_key=key
+                config.extension_step=2
+                user_input=""
+            else:
+                user_input =""# allows the user to type their book index again if they pressed a non-numeric value on the keypad
+                    
+
+
 
 def main():
     global user_input
@@ -32,6 +50,7 @@ def main():
     keypad_thread = Thread(target=keypad.get_key)
     keypad_thread.start()
     last_state =None
+    execution_result = ""
     while True:
         if config.return_books==1:
             if last_state != "return":
@@ -52,14 +71,46 @@ def main():
                 #lcd.lcd_display_string("Successful",1)
                 #lcd.lcd_display_string("Book has been disepensed")
         elif config.extend_return_period==1:
-            if last_state != "extend":
+            if config.extension_step==0:
+                if last_state != "extend_init":
+                    lcd.lcd_clear()
+                    last_state = "extend_init"
+                lcd.lcd_display_string("Book extension requested",1)
+                lcd.lcd_display_string("Processing...",2)
+                sleep(2.0)
                 lcd.lcd_clear()
-                last_state= "extend"
-            lcd.lcd_display_string("Book extension requested",1)
-            lcd.lcd_display_string("Processing...",2)
-            #if extend_return_period_sucess==1:
-                #lcd.lcd_display_string("Successful",1)
-                #lcd.lcd_display_string("Book return period has been extended",2)
+                config.extension_step=1
+            elif config.extension_step==1:
+                if last_state != "extend_prompt":
+                    last_state = "extend_prompt"
+                lcd.lcd_display_string("Select Book No:",1)
+                lcd.lcd_display_string("0-9, 0 for 10th book",2)
+            elif config.extension_step==2:
+                lcd.lcd_clear()
+                lcd.lcd_display_string("Processing...",1)
+                sleep(1.5)
+                target_index = config.chosen_book_key-1
+                execution_result = valid_status.book_loan_extension(target_index)
+                if execution_result =="Success":
+                    updated_book = config.library_database[config.user_id]["books_borrowed"][target_index]
+                    raw_timestamp = updated_book["expiry_timestamp"]
+                    formatted_date = time.strftime("%d/%m/%Y",time.localtime(raw_timestamp))
+                    lcd.lcd_display_string("Extension granted",1)
+                    lcd.lcd_display_string("New Deadline:{formatted_date}",2)
+                elif execution_result == "Already Done":
+                    lcd.lcd_display_string=("Limit reached",1)
+                    lcd.lcd_display_string=("Max of 1 extension",2)
+                else:
+                    lcd.lcd_display_string("Invalid choice",1)
+                    lcd.lcd_display_string("No book found",2)
+                sleep(3.5)
+            config.extend_return_period = 0
+            config.extension_step = 0
+            config.chosen_book_key =0 
+            last_state="idle"
+            lcd.lcd_clear()
+
+
         elif config.outside_range==1:
             if last_state!="ofr":
                 lcd.lcd_clear()
