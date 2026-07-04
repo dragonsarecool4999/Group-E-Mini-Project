@@ -5,7 +5,7 @@ from hal import hal_keypad as keypad
 import config
 import valid_status 
 import time
-
+import valid_status
 
 user_input =""
 selected = 0
@@ -51,7 +51,7 @@ def main():
     keypad_thread.start()
     last_state =None
     execution_result = ""
-    while True:
+    while True: # okay so after a button is pressed, it should prompt the user to scan their id and then after that the program should check for fines. If there are any, the program should prompt the user to pay for them
         if config.return_books==1:
             if last_state != "return":
                 lcd.lcd_clear()      

@@ -17,6 +17,22 @@ def book_loan_extension(book_index):
         return "Success"
     else:
         return "Already Done"
+def calculate_fine(expiry_timestamp): # This should be ran after the user has scanned their id
+    current_time = time.time()
+    if current_time> expiry_timestamp:
+        seconds_overdue = current_time - expiry_timestamp
+        days_overdue = seconds_overdue / config.SECONDS_IN_A_DAY
+        if seconds_overdue % config.SECONDS_IN_A_DAY != 0:
+            days_overdue += 1
+        FINE_RATE_PER_DAY = 0.15
+        total_fine = days_overdue * FINE_RATE_PER_DAY
+        return days_overdue, total_fine
+    return 0, 0.0
+
+def book_limit(): #This function should be run when users select what books they would like to borrow online
+    books_borrowed = len(config.library_database[config.user_id]["books_borrowed"])
+    if books_borrowed>10:
+        config.books_limit_exceeded = 1
+        return
 
     
-
