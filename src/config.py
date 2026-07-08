@@ -44,6 +44,8 @@ library_database ={
 
         ],
     },
-        
-           
+                
+}
+RFID_CARD_DATABASE= {
+    711535355173:50.00
 }

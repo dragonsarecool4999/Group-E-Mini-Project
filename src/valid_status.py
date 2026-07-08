@@ -26,7 +26,7 @@ def calculate_fine(expiry_timestamp): # This should be ran after the user has sc
             days_overdue += 1
         FINE_RATE_PER_DAY = 0.15
         total_fine = days_overdue * FINE_RATE_PER_DAY
-        return days_overdue, total_fine
+        return days_overdue, total_fine #RFID payment should be made after this function has ran, with the LCD prompting the user to pay
     return 0, 0.0
 
 def book_limit(): #This function should be run when users select what books they would like to borrow online
