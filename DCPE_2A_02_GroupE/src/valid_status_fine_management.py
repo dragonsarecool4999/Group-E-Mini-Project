@@ -1,4 +1,4 @@
-from hal import config
+from src import config
 import time 
 
 def book_loan_extension(book_index):
@@ -34,5 +34,14 @@ def book_limit(): #This function should be run when users select what books they
     if books_borrowed>10:
         config.books_limit_exceeded = 1
         return
-
-    
+def book_return(student_id, book_id): # Book return, implemented when barcode scan is finished
+    if config.user_id not in config.library_database:
+        config.user_na = 1
+        return False
+    student_record = config.library_database[student_id]
+    for book in student_record["books_borrowed"]:
+        if book["Book_id"]==book_id:
+            student_record["books_borrowed"].remove(book) #This removes all the values associated like expiry_timestamp associated with the id
+            return True
+    config.book_not_checked_out_by_user=1
+    return False

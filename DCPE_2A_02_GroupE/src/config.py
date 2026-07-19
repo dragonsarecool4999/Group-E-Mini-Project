@@ -11,6 +11,7 @@ extension_step=0
 chosen_book_key= None
 book_limit_exceeded = 0
 timeout_payment = 0
+book_not_checked_out_by_user= 0
 library_database ={
     "P2519863":
     {

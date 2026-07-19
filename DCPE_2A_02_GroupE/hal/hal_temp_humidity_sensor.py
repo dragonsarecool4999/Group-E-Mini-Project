@@ -2,7 +2,7 @@ import time
 
 import RPi.GPIO as GPIO
 
-from . import dht11
+from ...hal import dht11
 
 def init():
     GPIO.setmode(GPIO.BCM)

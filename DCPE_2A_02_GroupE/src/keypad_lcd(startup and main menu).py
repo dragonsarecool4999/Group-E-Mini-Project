@@ -1,23 +1,33 @@
 from threading import Thread
-from hal import hal_lcd as LCD
+from DCPE_2A_02_GroupE.hal import hal_lcd as LCD
 from time import sleep
-from hal import hal_keypad as keypad
+from DCPE_2A_02_GroupE.hal import hal_keypad as keypad
 import config
-import valid_status 
 import time
-import valid_status
+from src import valid_status_fine_management
 
 user_input =""
 selected = 0
-
+timeout_duration = 60
+last_activity_time = time.time()
+lcd_backlight_on=True
+lcd = None
+#barcode_scanned = 0
+success = None
 
 def keypad_check(key):
-    global user_input
+    global user_input, timeout_duration, last_activity_time, lcd_backlight_on, lcd
+
     if key is not None:
-        user_input += str(key)
+
+        last_activity_time=time.time()
+        if lcd_backlight_on == 0 and lcd is not None:
+            lcd.backlight(1)
+            lcd_backlight_on==1
+            user_input += str(key)
     
     if (len(user_input)==1):
-        if key ==1:
+        if key ==1: #
             config.return_books=1
         elif key ==2:
             config.collect_books=1
@@ -52,12 +62,41 @@ def main():
     last_state =None
     execution_result = ""
     while True: # okay so after a button is pressed, it should prompt the user to scan their id and then after that the program should check for fines. If there are any, the program should prompt the user to pay for them
-        if config.return_books==1:
+        if time.time()-last_activity_time>=timeout_duration: #REQ-04
+            if lcd_backlight_on:
+                lcd.backlight(0)
+                lcd_backlight_on=False
+                sleep(0.5)
+                continue 
+        if config.return_books==1: #REQ-03
             if last_state != "return":
                 lcd.lcd_clear()      
                 last_state = "return" 
             lcd.lcd_display_string("Book return selected",1)
             lcd.lcd_display_string("Processing...",2)
+            #barcode_scanned = [insert function which scans barcode]
+            #success=valid_status_fine_management.book_return(config.user_id, barcode_scanned)
+            #if success ==0:
+                #if config.user_na ==1:
+                    #lcd.lcd_clear()
+                    #lcd.lcd_display_string("User not found",1)
+                    #sleep(3)
+                   
+                #if config.book_not_checked_out_by_user==1:
+                    #lcd.lcd_clear()
+                    #lcd.lcd_display_string("Book was not",1)
+                    #lcd.lcd_display_string("checked out by user",2)
+                    #sleep(3)
+            #else:
+                #lcd.lcd_clear()
+                #lcd.lcd_display_string("Book successfully",1)
+                #lcd.lcd_display_string("Returned!",2)
+                #sleep(3)
+            success = None
+            config.return_books=0
+            last_state ="idle" 
+
+
             #if return_books_success==1:
                 #lcd.lcd_display_string("Successful",1)
                 #lcd.lcd_display_string("Thank you for return your books")
@@ -90,7 +129,7 @@ def main():
                 lcd.lcd_display_string("Processing...",1)
                 sleep(1.5)
                 target_index = config.chosen_book_key-1
-                execution_result = valid_status.book_loan_extension(target_index)
+                execution_result = valid_status_fine_management.book_loan_extension(target_index)
                 if execution_result =="Success":
                     updated_book = config.library_database[config.user_id]["books_borrowed"][target_index]
                     raw_timestamp = updated_book["expiry_timestamp"]
@@ -120,7 +159,7 @@ def main():
             config.outside_range =0
             user_input=""
         else:
-            if last_state != 'idle':
+            if last_state != 'idle': #REQ-01
                 lcd.lcd_clear()
                 last_state ="idle"
 

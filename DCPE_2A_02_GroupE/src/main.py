@@ -2,20 +2,20 @@ import time
 from threading import Thread
 import queue
 
-from hal import hal_led as led
-from hal import hal_lcd as LCD
-from hal import hal_adc as adc
-from hal import hal_buzzer as buzzer
-from hal import hal_keypad as keypad
-from hal import hal_moisture_sensor as moisture_sensor
-from hal import hal_input_switch as input_switch
-from hal import hal_ir_sensor as ir_sensor
-from hal import hal_rfid_reader as rfid_reader
-from hal import hal_servo as servo
-from hal import hal_temp_humidity_sensor as temp_humid_sensor
-from hal import hal_usonic as usonic
-from hal import hal_dc_motor as dc_motor
-from hal import hal_accelerometer as accel
+from DCPE_2A_02_GroupE.hal import hal_led as led
+from DCPE_2A_02_GroupE.hal import hal_lcd as LCD
+from DCPE_2A_02_GroupE.hal import hal_adc as adc
+from DCPE_2A_02_GroupE.hal import hal_buzzer as buzzer
+from DCPE_2A_02_GroupE.hal import hal_keypad as keypad
+from DCPE_2A_02_GroupE.hal import hal_moisture_sensor as moisture_sensor
+from DCPE_2A_02_GroupE.hal import hal_input_switch as input_switch
+from DCPE_2A_02_GroupE.hal import hal_ir_sensor as ir_sensor
+from DCPE_2A_02_GroupE.hal import hal_rfid_reader as rfid_reader
+from DCPE_2A_02_GroupE.hal import hal_servo as servo
+from DCPE_2A_02_GroupE.hal import hal_temp_humidity_sensor as temp_humid_sensor
+from DCPE_2A_02_GroupE.hal import hal_usonic as usonic
+from DCPE_2A_02_GroupE.hal import hal_dc_motor as dc_motor
+from DCPE_2A_02_GroupE.hal import hal_accelerometer as accel
 
 #Empty list to store sequence of keypad presses
 shared_keypad_queue = queue.Queue()
